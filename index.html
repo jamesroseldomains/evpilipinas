@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV vs Gas TCO Calculator Philippines | James Rosel</title>
+<meta name="description" content="Compare the true total cost of ownership of EVs, PHEVs, and Hybrids vs gas cars in the Philippines. Built for Filipino buyers by James Rosel.">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f5f5f0;
+    color: #1a1a1a;
+    line-height: 1.6;
+    padding: 16px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .container { background: white; border-radius: 12px; padding: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 16px; }
+  header { border-bottom: 1px solid #e5e5e0; padding-bottom: 18px; margin-bottom: 22px; }
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #e5e5e0; }
+  .subtitle { font-size: 14px; color: #666; }
+  .brand { font-size: 13px; color: #888; margin-top: 8px; }
+  .panel { margin-bottom: 22px; }
+  .ev-panel h2 { color: #1D9E75; }
+  .gas-panel h2 { color: #BA7517; }
+  .grid { display: grid; gap: 14px; }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+  .field { display: flex; flex-direction: column; }
+  label { font-size: 12px; color: #555; margin-bottom: 5px; font-weight: 500; }
+  label .v { color: #1a1a1a; font-weight: 600; }
+  select, input[type=text], input[type=number], input[type=email] {
+    padding: 9px 12px; border: 1px solid #d4d4d0; border-radius: 6px;
+    font-size: 14px; background: white; width: 100%; font-family: inherit;
+  }
+  select:focus, input:focus { outline: 2px solid #1D9E75; outline-offset: -1px; border-color: #1D9E75; }
+  input[type=range] { width: 100%; accent-color: #1D9E75; }
+  .toggle { display: flex; gap: 0; border: 1px solid #d4d4d0; border-radius: 6px; overflow: hidden; }
+  .toggle button {
+    flex: 1; padding: 8px 10px; border: none; background: white; cursor: pointer;
+    font-size: 13px; font-family: inherit; color: #555; transition: all 0.15s;
+  }
+  .toggle button.active { background: #1D9E75; color: white; }
+  .toggle button:hover:not(.active) { background: #f5f5f0; }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.5px; margin-left: 8px;
+  }
+  .badge-bev { background: #E1F5EE; color: #0F6E56; }
+  .badge-phev { background: #E6F1FB; color: #185FA5; }
+  .badge-hev { background: #FAEEDA; color: #854F0B; }
+  .info-box {
+    background: #f0f9f4; border-left: 3px solid #1D9E75;
+    padding: 10px 12px; border-radius: 4px; font-size: 12px;
+    color: #444; margin-top: 6px;
+  }
+  .info-box strong { color: #1D9E75; }
+  .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .card { background: #f9f9f5; border-radius: 8px; padding: 16px; }
+  .card-label { font-size: 11px; color: #666; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+  .card-value { font-size: 22px; font-weight: 600; }
+  .save-positive { color: #1D9E75; }
+  .save-negative { color: #c5524a; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 12px; font-size: 12px; color: #666; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+  .chart-wrap { position: relative; width: 100%; height: 320px; margin-bottom: 8px; }
+  .form-section { background: linear-gradient(135deg, #f0f9f4 0%, #e8f5ee 100%); border-radius: 12px; padding: 24px; margin-top: 20px; }
+  .form-section h2 { color: #1D9E75; border: none; padding: 0; margin-bottom: 8px; }
+  .form-section p { font-size: 14px; color: #555; margin-bottom: 16px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .checkbox-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 14px; font-size: 13px; color: #555; }
+  .checkbox-row input { margin-top: 3px; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  button.primary {
+    background: #1D9E75; color: white; border: none; padding: 11px 20px; border-radius: 6px;
+    font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
+    transition: all 0.15s;
+  }
+  button.primary:hover { background: #0F6E56; }
+  button.secondary {
+    background: white; color: #1D9E75; border: 1px solid #1D9E75; padding: 11px 20px; border-radius: 6px;
+    font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit;
+  }
+  button.secondary:hover { background: #f0f9f4; }
+  .form-status { margin-top: 12px; font-size: 13px; min-height: 18px; }
+  .form-status.success { color: #1D9E75; }
+  .form-status.error { color: #c5524a; }
+  .footer { text-align: center; font-size: 12px; color: #888; padding: 20px; }
+  .footer a { color: #1D9E75; text-decoration: none; }
+  .help { font-size: 11px; color: #888; margin-top: 2px; }
+  @media print {
+    body { background: white; padding: 0; }
+    .form-section, .btn-row, .footer-actions { display: none !important; }
+    .container { box-shadow: none; padding: 0; }
+  }
+  @media (max-width: 600px) {
+    .form-row { grid-template-columns: 1fr; }
+    .results { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="container">
+<header>
+  <h1>EV vs Gas TCO Calculator — Philippines</h1>
+  <div class="subtitle">True total cost of ownership for Filipino car buyers · BEV, PHEV, HEV supported</div>
+  <div class="brand">By James Rosel · evpilipinas.com</div>
+</header>
+
+<div class="panel">
+  <h2>Trip & inflation settings</h2>
+  <div class="grid grid-3">
+    <div class="field">
+      <label>Daily km driven: <span class="v" id="km-out">40</span> km</label>
+      <input type="range" id="km" min="5" max="200" value="40" step="1">
+    </div>
+    <div class="field">
+      <label>Years owned: <span class="v" id="yrs-out">10</span></label>
+      <input type="range" id="yrs" min="1" max="50" value="10" step="1">
+    </div>
+    <div class="field">
+      <label>Annual inflation rate: <span class="v" id="infl-out">4</span>%</label>
+      <input type="range" id="infl" min="0" max="15" value="4" step="0.5">
+      <div class="help">Applied to fuel, electricity & maintenance</div>
+    </div>
+  </div>
+</div>
+
+<div class="panel ev-panel">
+  <h2>EV / Hybrid <span id="ev-badge" class="badge badge-bev">BEV</span></h2>
+
+  <div class="grid grid-2" style="margin-bottom: 14px;">
+    <div class="field">
+      <label>Vehicle</label>
+      <select id="ev-pick">
+        <option value="emax7">BYD eMax 7 (BEV)</option>
+        <option value="atto3" selected>BYD Atto 3 (BEV)</option>
+        <option value="seagull">BYD Seagull (BEV)</option>
+        <option value="dolphin">BYD Dolphin (BEV)</option>
+        <option value="seal5">BYD Seal 5 DM-i (PHEV)</option>
+        <option value="sealion6">BYD Sealion 6 DM-i (PHEV)</option>
+        <option value="sealion5">BYD Sealion 5 DM-i (PHEV)</option>
+        <option value="innovahev">Toyota Innova Zenix Hybrid (HEV)</option>
+        <option value="custom">Custom (enter your own)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Vehicle type</label>
+      <div class="toggle" id="ev-type">
+        <button type="button" class="active" data-val="bev">BEV</button>
+        <button type="button" data-val="phev">PHEV</button>
+        <button type="button" data-val="hev">HEV</button>
+      </div>
+      <div class="help">Auto-set by model · override for custom</div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-bottom: 14px;">
+    <div class="field">
+      <label>Condition</label>
+      <div class="toggle" id="ev-condition">
+        <button type="button" class="active" data-val="new">New</button>
+        <button type="button" data-val="used">Used</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Purchase price (₱)</label>
+      <input type="number" id="ev-price" value="1548000" min="0" step="1000">
+      <div class="help">Adjust if buying used or different trim</div>
+    </div>
+  </div>
+
+  <div id="phev-section" style="display: none; margin-bottom: 14px;">
+    <div class="field">
+      <label>% of km driven on electric: <span class="v" id="elec-split-out">60</span>%</label>
+      <input type="range" id="elec-split" min="0" max="100" value="60" step="5">
+      <div class="help">Higher if you charge nightly · Lower if commute exceeds battery range</div>
+    </div>
+  </div>
+
+  <div id="energy-mode-section" style="margin-bottom: 14px;">
+    <div class="field" style="margin-bottom: 14px;">
+      <label>Energy cost input mode</label>
+      <div class="toggle" id="ev-mode">
+        <button type="button" class="active" data-val="perkm">₱ per km</button>
+        <button type="button" data-val="kwh">kWh / 100km</button>
+      </div>
+    </div>
+
+    <div id="ev-mode-perkm">
+      <div class="field">
+        <label>Cost per km (₱)</label>
+        <input type="number" id="ev-perkm" value="2" min="0" step="0.1">
+        <div class="info-box">
+          <strong>PH reference values:</strong> Pure EV (BEV) ≈ ₱2/km · PHEV ≈ ₱4–5/km · HEV ≈ ₱4.50/km · Verify with your real wall charger reading ÷ km driven for accuracy.
+        </div>
+      </div>
+    </div>
+
+    <div id="ev-mode-kwh" style="display: none;">
+      <div class="grid grid-2">
+        <div class="field">
+          <label>Consumption (kWh / 100km)</label>
+          <input type="number" id="ev-kwh100" value="16" min="0" step="0.1">
+          <div class="help">From wall charger reading, NOT infotainment display</div>
+        </div>
+        <div class="field">
+          <label>Meralco rate: ₱<span class="v" id="kwh-out">14</span>/kWh</label>
+          <input type="range" id="kwh" min="6" max="22" value="14" step="0.5">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ev-fuel-section" style="display: none; margin-bottom: 14px;">
+    <div class="grid grid-2">
+      <div class="field">
+        <label id="ev-fuel-label">Fuel efficiency when on gas (km/L)</label>
+        <input type="number" id="ev-fuel-kml" value="20" min="1" step="0.5">
+        <div class="help" id="ev-fuel-help">PHEV: 18–22 km/L typical · HEV Innova: 18–20 km/L typical</div>
+      </div>
+      <div class="field">
+        <label>Fuel price reference: ₱<span class="v" id="ev-fuel-price-out">85</span>/L</label>
+        <input type="range" id="ev-fuel-price" min="40" max="150" value="85" step="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="field">
+      <label>Annual insurance (₱)</label>
+      <input type="number" id="ev-ins" value="55000" min="0" step="1000">
+    </div>
+    <div class="field">
+      <label>Insurance yearly drop (%)</label>
+      <input type="number" id="ev-ins-dep" value="10" min="0" max="50" step="1">
+      <div class="help">Premium decreases as car ages</div>
+    </div>
+    <div class="field">
+      <label>Annual PMS / maintenance (₱)</label>
+      <input type="number" id="ev-pms" value="18000" min="0" step="1000">
+    </div>
+  </div>
+</div>
+
+<div class="panel gas-panel">
+  <h2>Gas / Diesel</h2>
+  <div class="grid grid-2" style="margin-bottom: 14px;">
+    <div class="field">
+      <label>Vehicle</label>
+      <select id="gas-pick">
+        <option value="innova" selected>Toyota Innova</option>
+        <option value="avanza">Toyota Avanza</option>
+        <option value="fortuner">Toyota Fortuner</option>
+        <option value="xpander">Mitsubishi Xpander</option>
+        <option value="vios">Toyota Vios</option>
+        <option value="mirage">Mitsubishi Mirage G4</option>
+        <option value="custom">Custom (enter your own)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Condition</label>
+      <div class="toggle" id="gas-condition">
+        <button type="button" class="active" data-val="new">New</button>
+        <button type="button" data-val="used">Used</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-3" style="margin-bottom: 14px;">
+    <div class="field">
+      <label>Purchase price (₱)</label>
+      <input type="number" id="gas-price" value="1500000" min="0" step="1000">
+    </div>
+    <div class="field">
+      <label>Fuel efficiency (km/L)</label>
+      <input type="number" id="gas-kml" value="8" min="1" step="0.5">
+    </div>
+    <div class="field">
+      <label>Fuel price: ₱<span class="v" id="fuel-out">85</span>/L</label>
+      <input type="range" id="fuel" min="40" max="150" value="85" step="1">
+    </div>
+  </div>
+
+  <div class="grid grid-3">
+    <div class="field">
+      <label>Annual insurance (₱)</label>
+      <input type="number" id="gas-ins" value="40000" min="0" step="1000">
+    </div>
+    <div class="field">
+      <label>Insurance yearly drop (%)</label>
+      <input type="number" id="gas-ins-dep" value="10" min="0" max="50" step="1">
+    </div>
+    <div class="field">
+      <label>Annual PMS / maintenance (₱)</label>
+      <input type="number" id="gas-pms" value="30000" min="0" step="1000">
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="container">
+<h2>Results</h2>
+<div class="results">
+  <div class="card"><div class="card-label">EV total cost</div><div class="card-value" id="ev-total">—</div></div>
+  <div class="card"><div class="card-label">Gas total cost</div><div class="card-value" id="gas-total">—</div></div>
+  <div class="card"><div class="card-label">You save</div><div class="card-value save-positive" id="savings">—</div></div>
+  <div class="card"><div class="card-label">Period</div><div class="card-value" id="period-display" style="font-size:18px;">10 yrs</div></div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><span class="legend-dot" style="background:#1D9E75"></span>Purchase price</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#378ADD"></span>Energy / fuel</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#BA7517"></span>Insurance</div>
+  <div class="legend-item"><span class="legend-dot" style="background:#888780"></span>Maintenance</div>
+</div>
+<div class="chart-wrap"><canvas id="chart"></canvas></div>
+
+<div class="btn-row footer-actions" style="margin-top: 16px;">
+  <button class="secondary" onclick="window.print()">Print / Save as PDF</button>
+  <a href="#share-form" class="primary" style="text-decoration:none; display:inline-block;">Email me my report</a>
+</div>
+</div>
+
+<div class="container form-section" id="share-form">
+<h2>Get your personalized report</h2>
+<p>Enter your name and email to receive your complete TCO comparison report. We'll also notify you when James reviews new EVs on YouTube.</p>
+<form id="lead-form">
+  <div class="form-row">
+    <input type="text" id="lead-name" name="name" placeholder="Your name" required>
+    <input type="email" id="lead-email" name="email" placeholder="Your email" required>
+  </div>
+  <div class="checkbox-row">
+    <input type="checkbox" id="lead-subscribe" checked>
+    <label for="lead-subscribe" style="margin: 0; font-size: 13px;">Yes, notify me about new EV reviews and EV news in the Philippines</label>
+  </div>
+  <button type="submit" class="primary">Send my report</button>
+  <div id="form-status" class="form-status"></div>
+</form>
+</div>
+
+<div class="footer">
+  Calculator by James Rosel · Numbers are estimates · Watch full reviews on YouTube ·
+  <a href="https://evpilipinas.com">evpilipinas.com</a>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const evDefaults = {
+  emax7:    { name: 'BYD eMax 7',           type: 'bev',  price: 1498000, kwh100: 17.5, perkm: 2.5, ins: 55000, pms: 18000 },
+  atto3:    { name: 'BYD Atto 3',           type: 'bev',  price: 1548000, kwh100: 16.0, perkm: 2.2, ins: 55000, pms: 18000 },
+  seagull:  { name: 'BYD Seagull',          type: 'bev',  price:  898000, kwh100: 12.5, perkm: 1.8, ins: 45000, pms: 15000 },
+  dolphin:  { name: 'BYD Dolphin',          type: 'bev',  price: 1598000, kwh100: 14.5, perkm: 2.0, ins: 55000, pms: 18000 },
+  seal5:    { name: 'BYD Seal 5 DM-i',      type: 'phev', price: 1548000, kwh100: 14.0, perkm: 2.0, fuelKml: 22, elecSplit: 60, ins: 55000, pms: 20000 },
+  sealion6: { name: 'BYD Sealion 6 DM-i',   type: 'phev', price: 1898000, kwh100: 15.0, perkm: 2.2, fuelKml: 20, elecSplit: 55, ins: 55000, pms: 22000 },
+  sealion5: { name: 'BYD Sealion 5 DM-i',   type: 'phev', price: 1798000, kwh100: 14.5, perkm: 2.1, fuelKml: 21, elecSplit: 60, ins: 55000, pms: 22000 },
+  innovahev:{ name: 'Toyota Innova Zenix Hybrid', type: 'hev', price: 2168000, kwh100: 0, perkm: 4.5, fuelKml: 18, ins: 55000, pms: 25000 },
+  custom:   { name: 'Custom EV',            type: 'bev',  price: 1500000, kwh100: 16.0, perkm: 2.5, fuelKml: 20, elecSplit: 60, ins: 50000, pms: 18000 }
+};
+const gasDefaults = {
+  innova:   { name: 'Toyota Innova',        price: 1500000, kml: 8,  ins: 40000, pms: 30000 },
+  avanza:   { name: 'Toyota Avanza',        price: 1080000, kml: 8,  ins: 40000, pms: 25000 },
+  fortuner: { name: 'Toyota Fortuner',      price: 2130000, kml: 8,  ins: 40000, pms: 35000 },
+  xpander:  { name: 'Mitsubishi Xpander',   price: 1230000, kml: 8,  ins: 40000, pms: 25000 },
+  vios:     { name: 'Toyota Vios',          price:  840000, kml: 10, ins: 40000, pms: 22000 },
+  mirage:   { name: 'Mitsubishi Mirage G4', price:  745000, kml: 12, ins: 40000, pms: 20000 },
+  custom:   { name: 'Custom Gas Car',       price: 1000000, kml: 8,  ins: 40000, pms: 25000 }
+};
+
+let evCondition = 'new';
+let gasCondition = 'new';
+let evMode = 'perkm';
+let evType = 'bev';
+let chart;
+
+const fmt = n => '₱' + Math.round(n).toLocaleString();
+const fmtShort = n => n >= 1000000 ? '₱' + (n/1000000).toFixed(2) + 'M' : n >= 1000 ? '₱' + Math.round(n/1000) + 'K' : '₱' + Math.round(n);
+
+function inflatedSum(baseAnnual, years, rate) {
+  if (rate === 0) return baseAnnual * years;
+  const r = 1 + rate;
+  return baseAnnual * (Math.pow(r, years) - 1) / rate;
+}
+function depreciatedSum(baseAnnual, years, depRate) {
+  if (depRate === 0) return baseAnnual * years;
+  const d = 1 - depRate;
+  if (d === 0) return baseAnnual;
+  return baseAnnual * (1 - Math.pow(d, years)) / depRate;
+}
+
+function setEvType(type) {
+  evType = type;
+  document.querySelectorAll('#ev-type button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.val === type);
+  });
+  const badge = document.getElementById('ev-badge');
+  badge.textContent = type.toUpperCase();
+  badge.className = 'badge badge-' + type;
+
+  const phevSection = document.getElementById('phev-section');
+  const energyModeSection = document.getElementById('energy-mode-section');
+  const fuelSection = document.getElementById('ev-fuel-section');
+  const fuelLabel = document.getElementById('ev-fuel-label');
+  const fuelHelp = document.getElementById('ev-fuel-help');
+
+  if (type === 'bev') {
+    phevSection.style.display = 'none';
+    energyModeSection.style.display = 'block';
+    fuelSection.style.display = 'none';
+  } else if (type === 'phev') {
+    phevSection.style.display = 'block';
+    energyModeSection.style.display = 'block';
+    fuelSection.style.display = 'block';
+    fuelLabel.textContent = 'Fuel efficiency when on gas (km/L)';
+    fuelHelp.textContent = 'PHEV typical: 18–22 km/L when running on petrol';
+  } else if (type === 'hev') {
+    phevSection.style.display = 'none';
+    energyModeSection.style.display = 'none';
+    fuelSection.style.display = 'block';
+    fuelLabel.textContent = 'Hybrid fuel efficiency (km/L)';
+    fuelHelp.textContent = 'HEV typical: 18–22 km/L · HEV runs 100% on fuel, just very efficiently';
+  }
+
+  compute();
+}
+
+function loadEvDefaults() {
+  const key = document.getElementById('ev-pick').value;
+  const d = evDefaults[key];
+  document.getElementById('ev-price').value = d.price;
+  document.getElementById('ev-perkm').value = d.perkm;
+  document.getElementById('ev-kwh100').value = d.kwh100 || 16;
+  document.getElementById('ev-ins').value = d.ins;
+  document.getElementById('ev-pms').value = d.pms;
+  if (d.fuelKml) document.getElementById('ev-fuel-kml').value = d.fuelKml;
+  if (d.elecSplit !== undefined) {
+    document.getElementById('elec-split').value = d.elecSplit;
+    document.getElementById('elec-split-out').textContent = d.elecSplit;
+  }
+  setEvType(d.type);
+}
+function loadGasDefaults() {
+  const key = document.getElementById('gas-pick').value;
+  const d = gasDefaults[key];
+  document.getElementById('gas-price').value = d.price;
+  document.getElementById('gas-kml').value = d.kml;
+  document.getElementById('gas-ins').value = d.ins;
+  document.getElementById('gas-pms').value = d.pms;
+  compute();
+}
+
+function setupToggle(containerId, callback) {
+  const buttons = document.querySelectorAll('#' + containerId + ' button');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      callback(btn.dataset.val);
+    });
+  });
+}
+
+function setEvMode(val) {
+  evMode = val;
+  document.getElementById('ev-mode-perkm').style.display = val === 'perkm' ? 'block' : 'none';
+  document.getElementById('ev-mode-kwh').style.display = val === 'kwh' ? 'block' : 'none';
+  compute();
+}
+
+function compute() {
+  const km = +document.getElementById('km').value;
+  const yrs = +document.getElementById('yrs').value;
+  const inflRate = +document.getElementById('infl').value / 100;
+  const fuelPrice = +document.getElementById('fuel').value;
+  const evFuelPrice = +document.getElementById('ev-fuel-price').value;
+  const kwhRate = +document.getElementById('kwh').value;
+  const elecSplit = +document.getElementById('elec-split').value / 100;
+
+  document.getElementById('km-out').textContent = km;
+  document.getElementById('yrs-out').textContent = yrs;
+  document.getElementById('infl-out').textContent = (+document.getElementById('infl').value).toFixed(1);
+  document.getElementById('fuel-out').textContent = fuelPrice;
+  document.getElementById('ev-fuel-price-out').textContent = evFuelPrice;
+  document.getElementById('kwh-out').textContent = kwhRate;
+  document.getElementById('elec-split-out').textContent = (+document.getElementById('elec-split').value);
+  document.getElementById('period-display').textContent = yrs + ' yrs';
+
+  const annualKm = km * 365;
+
+  const evPrice = +document.getElementById('ev-price').value;
+  const evIns = +document.getElementById('ev-ins').value;
+  const evInsDep = +document.getElementById('ev-ins-dep').value / 100;
+  const evPms = +document.getElementById('ev-pms').value;
+
+  let evAnnualEnergy = 0;
+
+  if (evType === 'bev') {
+    if (evMode === 'perkm') {
+      evAnnualEnergy = annualKm * (+document.getElementById('ev-perkm').value);
+    } else {
+      evAnnualEnergy = (annualKm / 100) * (+document.getElementById('ev-kwh100').value) * kwhRate;
+    }
+  } else if (evType === 'phev') {
+    const elecKm = annualKm * elecSplit;
+    const fuelKm = annualKm * (1 - elecSplit);
+    let elecCost;
+    if (evMode === 'perkm') {
+      elecCost = elecKm * (+document.getElementById('ev-perkm').value);
+    } else {
+      elecCost = (elecKm / 100) * (+document.getElementById('ev-kwh100').value) * kwhRate;
+    }
+    const evFuelKml = +document.getElementById('ev-fuel-kml').value;
+    const fuelCost = (fuelKm / evFuelKml) * evFuelPrice;
+    evAnnualEnergy = elecCost + fuelCost;
+  } else if (evType === 'hev') {
+    const evFuelKml = +document.getElementById('ev-fuel-kml').value;
+    evAnnualEnergy = (annualKm / evFuelKml) * evFuelPrice;
+  }
+
+  const evEnergyTotal = inflatedSum(evAnnualEnergy, yrs, inflRate);
+  const evInsTotal = depreciatedSum(evIns, yrs, evInsDep);
+  const evPmsTotal = inflatedSum(evPms, yrs, inflRate);
+  const evTotal = evPrice + evEnergyTotal + evInsTotal + evPmsTotal;
+
+  const gasPrice = +document.getElementById('gas-price').value;
+  const gasKml = +document.getElementById('gas-kml').value;
+  const gasIns = +document.getElementById('gas-ins').value;
+  const gasInsDep = +document.getElementById('gas-ins-dep').value / 100;
+  const gasPms = +document.getElementById('gas-pms').value;
+  const gasAnnualFuel = (annualKm / gasKml) * fuelPrice;
+  const gasFuelTotal = inflatedSum(gasAnnualFuel, yrs, inflRate);
+  const gasInsTotal = depreciatedSum(gasIns, yrs, gasInsDep);
+  const gasPmsTotal = inflatedSum(gasPms, yrs, inflRate);
+  const gasTotal = gasPrice + gasFuelTotal + gasInsTotal + gasPmsTotal;
+
+  const savings = gasTotal - evTotal;
+
+  document.getElementById('ev-total').textContent = fmtShort(evTotal);
+  document.getElementById('gas-total').textContent = fmtShort(gasTotal);
+  const savEl = document.getElementById('savings');
+  savEl.textContent = (savings >= 0 ? '+' : '-') + fmtShort(Math.abs(savings));
+  savEl.className = 'card-value ' + (savings >= 0 ? 'save-positive' : 'save-negative');
+
+  const evKey = document.getElementById('ev-pick').value;
+  const gasKey = document.getElementById('gas-pick').value;
+  const evLabel = (evCondition === 'used' ? 'Used ' : '') + evDefaults[evKey].name;
+  const gasLabel = (gasCondition === 'used' ? 'Used ' : '') + gasDefaults[gasKey].name;
+
+  const data = {
+    labels: [evLabel, gasLabel],
+    datasets: [
+      { label: 'Purchase', data: [evPrice, gasPrice], backgroundColor: '#1D9E75' },
+      { label: 'Energy/fuel', data: [evEnergyTotal, gasFuelTotal], backgroundColor: '#378ADD' },
+      { label: 'Insurance', data: [evInsTotal, gasInsTotal], backgroundColor: '#BA7517' },
+      { label: 'Maintenance', data: [evPmsTotal, gasPmsTotal], backgroundColor: '#888780' }
+    ]
+  };
+
+  if (chart) { chart.data = data; chart.update(); }
+  else {
+    chart = new Chart(document.getElementById('chart'), {
+      type: 'bar', data,
+      options: {
+        responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+        scales: { x: { stacked: true, ticks: { callback: v => fmtShort(v) } }, y: { stacked: true } },
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + fmt(ctx.parsed.x) } } }
+      }
+    });
+  }
+}
+
+document.getElementById('ev-pick').addEventListener('change', loadEvDefaults);
+document.getElementById('gas-pick').addEventListener('change', loadGasDefaults);
+setupToggle('ev-condition', v => { evCondition = v; compute(); });
+setupToggle('gas-condition', v => { gasCondition = v; compute(); });
+setupToggle('ev-mode', setEvMode);
+setupToggle('ev-type', setEvType);
+
+const liveInputs = ['km','yrs','infl','fuel','ev-fuel-price','kwh','elec-split','ev-price','ev-perkm','ev-kwh100','ev-fuel-kml','ev-ins','ev-ins-dep','ev-pms','gas-price','gas-kml','gas-ins','gas-ins-dep','gas-pms'];
+liveInputs.forEach(id => document.getElementById(id).addEventListener('input', compute));
+
+document.getElementById('lead-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const status = document.getElementById('form-status');
+  status.textContent = 'Sending...';
+  status.className = 'form-status';
+
+  const evKey = document.getElementById('ev-pick').value;
+  const gasKey = document.getElementById('gas-pick').value;
+  const payload = {
+    access_key: 'YOUR_WEB3FORMS_KEY_HERE',
+    name: document.getElementById('lead-name').value,
+    email: document.getElementById('lead-email').value,
+    subscribe: document.getElementById('lead-subscribe').checked ? 'Yes' : 'No',
+    ev_vehicle: (evCondition === 'used' ? 'Used ' : 'New ') + evDefaults[evKey].name + ' (' + evType.toUpperCase() + ')',
+    gas_vehicle: (gasCondition === 'used' ? 'Used ' : 'New ') + gasDefaults[gasKey].name,
+    ev_total: document.getElementById('ev-total').textContent,
+    gas_total: document.getElementById('gas-total').textContent,
+    savings: document.getElementById('savings').textContent,
+    years: document.getElementById('yrs').value,
+    daily_km: document.getElementById('km').value,
+    subject: 'New TCO calculator lead from evpilipinas.com',
+    from_name: 'evpilipinas.com Calculator'
+  };
+
+  try {
+    const res = await fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      status.textContent = 'Thanks! Your report is on its way. James will email you shortly.';
+      status.className = 'form-status success';
+      document.getElementById('lead-form').reset();
+    } else {
+      status.textContent = 'Something went wrong. Please try again or screenshot your results.';
+      status.className = 'form-status error';
+    }
+  } catch (err) {
+    status.textContent = 'Network error. Please try again or screenshot your results.';
+    status.className = 'form-status error';
+  }
+});
+
+loadEvDefaults();
+compute();
+</script>
+</body>
+</html>
