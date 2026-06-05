@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Latest Videos | EV Pilipinas</title>
+<meta name="description" content="Latest EV Pilipinas videos by James Rosel.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0a0d0c;--card:#111816;--card-hover:#16201d;--line:#1e2b27;
+    --text:#eef3f1;--muted:#8aa39b;--accent:#2ee6a6;--accent-2:#13c4e6;
+    --glow:rgba(46,230,166,.18);--radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Manrope',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+    -webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden;
+  }
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(620px circle at 18% 8%,rgba(46,230,166,.10),transparent 55%),
+               radial-gradient(680px circle at 85% 92%,rgba(19,196,230,.09),transparent 55%);}
+  .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:26px 20px 60px}
+
+  .back{display:inline-flex;align-items:center;gap:7px;color:var(--muted);text-decoration:none;
+    font-size:.9rem;font-weight:600;margin-bottom:26px;transition:color .2s}
+  .back:hover{color:var(--accent)}
+  .back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;
+    font-size:clamp(1.7rem,6vw,2.4rem);line-height:1.05}
+  .sub{color:var(--muted);margin-top:8px;font-size:.98rem}
+
+  .state{text-align:center;color:var(--muted);padding:60px 20px;font-size:.95rem}
+  .state.err{color:#ff7a7a}
+  .spinner{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);
+    border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:18px;margin-top:30px}
+  @media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:880px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+  .vid{display:flex;flex-direction:column;text-decoration:none;color:var(--text);
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+    transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease;opacity:0;
+    animation:fadeUp .5s ease forwards}
+  .vid:hover{transform:translateY(-4px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    box-shadow:0 16px 36px -18px var(--glow)}
+  .thumb{position:relative;aspect-ratio:16/9;background:var(--card-hover);overflow:hidden}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+  .vid:hover .thumb img{transform:scale(1.05)}
+  .play{position:absolute;inset:0;display:grid;place-items:center;opacity:0;transition:opacity .22s}
+  .vid:hover .play{opacity:1}
+  .play span{width:52px;height:52px;border-radius:50%;background:rgba(10,13,12,.7);
+    backdrop-filter:blur(4px);display:grid;place-items:center;border:1px solid var(--accent)}
+  .play svg{width:20px;height:20px;fill:var(--accent);margin-left:3px}
+  .meta{padding:14px 15px 16px}
+  .title{font-weight:700;font-size:.97rem;line-height:1.35;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .date{color:var(--muted);font-size:.8rem;margin-top:8px}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> EV Pilipinas</a>
+    <h1>My Latest Videos</h1>
+    <p class="sub">Everything from the channel, newest first.</p>
+
+    <div id="status" class="state"><div class="spinner"></div>Loading videos…</div>
+    <div id="grid" class="grid"></div>
+  </div>
+
+<script>
+/* =====================================================================
+   FILL IN THESE TWO VALUES, then save & upload. Nothing else to edit.
+   ===================================================================== */
+const CHANNEL_HANDLE = "@YOURCHANNEL";   // e.g. "@EVPilipinas" (with the @)
+const API_KEY        = "YOUR_API_KEY";   // from Google Cloud Console
+/* ===================================================================== */
+
+const statusEl = document.getElementById('status');
+const gridEl   = document.getElementById('grid');
+
+function fmtDate(iso){
+  return new Date(iso).toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'});
+}
+
+async function loadVideos(){
+  if(API_KEY.includes("YOUR_API_KEY") || CHANNEL_HANDLE.includes("YOURCHANNEL")){
+    statusEl.className="state err";
+    statusEl.textContent="Setup needed: open videos.html and fill in CHANNEL_HANDLE and API_KEY.";
+    return;
+  }
+  try{
+    // 1. Resolve channel handle -> uploads playlist ID
+    const chRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=contentDetails&forHandle=${encodeURIComponent(CHANNEL_HANDLE)}&key=${API_KEY}`);
+    const chData = await chRes.json();
+    if(chData.error) throw new Error(chData.error.message);
+    if(!chData.items || !chData.items.length) throw new Error("Channel not found. Check the handle.");
+    const uploads = chData.items[0].contentDetails.relatedPlaylists.uploads;
+
+    // 2. Page through every uploaded video
+    let videos=[], pageToken="";
+    do{
+      const r = await fetch(`https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${uploads}&pageToken=${pageToken}&key=${API_KEY}`);
+      const d = await r.json();
+      if(d.error) throw new Error(d.error.message);
+      videos = videos.concat(d.items);
+      pageToken = d.nextPageToken || "";
+    }while(pageToken);
+
+    if(!videos.length){statusEl.textContent="No videos found yet.";return;}
+
+    statusEl.style.display="none";
+    videos.forEach((v,i)=>{
+      const s = v.snippet;
+      const id = s.resourceId.videoId;
+      const thumb = (s.thumbnails.high || s.thumbnails.medium || s.thumbnails.default).url;
+      const a = document.createElement('a');
+      a.className="vid"; a.href=`https://www.youtube.com/watch?v=${id}`;
+      a.target="_blank"; a.rel="noopener";
+      a.style.animationDelay=(Math.min(i,12)*0.04)+"s";
+      a.innerHTML=`
+        <div class="thumb">
+          <img src="${thumb}" alt="" loading="lazy">
+          <div class="play"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></div>
+        </div>
+        <div class="meta">
+          <div class="title">${s.title.replace(/</g,'&lt;')}</div>
+          <div class="date">${fmtDate(s.publishedAt)}</div>
+        </div>`;
+      gridEl.appendChild(a);
+    });
+  }catch(e){
+    statusEl.className="state err";
+    statusEl.textContent="Couldn't load videos: "+e.message;
+  }
+}
+loadVideos();
+</script>
+</body>
+</html>
