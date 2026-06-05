@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My EV Gear | EV Pilipinas</title>
+<meta name="description" content="EV accessories, dashcams, and camera gear James Rosel uses and recommends.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0a0d0c;--card:#111816;--card-hover:#16201d;--line:#1e2b27;
+    --text:#eef3f1;--muted:#8aa39b;--accent:#2ee6a6;--accent-2:#13c4e6;
+    --glow:rgba(46,230,166,.18);--radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Manrope',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+    -webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden;
+  }
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(620px circle at 18% 6%,rgba(46,230,166,.10),transparent 55%),
+               radial-gradient(680px circle at 85% 94%,rgba(19,196,230,.08),transparent 55%);}
+  .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:26px 20px 70px}
+
+  .back{display:inline-flex;align-items:center;gap:7px;color:var(--muted);text-decoration:none;
+    font-size:.9rem;font-weight:600;margin-bottom:24px;transition:color .2s}
+  .back:hover{color:var(--accent)}
+  .back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;
+    font-size:clamp(1.7rem,6vw,2.4rem);line-height:1.05}
+  .sub{color:var(--muted);margin-top:8px;font-size:.98rem;max-width:54ch;line-height:1.5}
+  .disclosure{color:var(--muted);font-size:.8rem;margin-top:14px;opacity:.85;
+    border-left:2px solid var(--line);padding-left:12px;max-width:60ch;line-height:1.5}
+
+  /* search */
+  .search{position:relative;margin:28px 0 6px;max-width:420px}
+  .search svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .search input{
+    width:100%;background:var(--card);border:1px solid var(--line);border-radius:12px;
+    color:var(--text);font-family:inherit;font-size:.95rem;padding:13px 16px 13px 44px;outline:none;
+    transition:border-color .2s}
+  .search input::placeholder{color:var(--muted)}
+  .search input:focus{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+
+  .noresults{display:none;color:var(--muted);padding:40px 4px;font-size:.95rem}
+
+  /* category */
+  .cat{margin-top:38px}
+  .cat-head{display:flex;align-items:baseline;gap:10px;margin-bottom:16px}
+  .cat-head h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:1.18rem;letter-spacing:-.01em}
+  .cat-head .count{color:var(--muted);font-size:.85rem}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+
+  .item{display:flex;flex-direction:column;justify-content:space-between;gap:14px;
+    text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--line);
+    border-radius:var(--radius);padding:18px 18px 16px;min-height:96px;
+    transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+  a.item:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line));
+    box-shadow:0 14px 30px -18px var(--glow)}
+  .item-name{font-weight:600;font-size:.97rem;line-height:1.35}
+  .tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;
+    font-size:.8rem;font-weight:600;color:var(--accent)}
+  .tag svg{width:14px;height:14px;stroke:var(--accent);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  a.item:hover .tag{gap:10px}
+  /* in-store (no link) variant */
+  .item.store{cursor:default}
+  .tag.loc{color:var(--muted)}
+  .tag.loc svg{stroke:var(--muted)}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> EV Pilipinas</a>
+    <h1>My EV Gear</h1>
+    <p class="sub">The EV accessories, dashcams, and camera gear I actually use and recommend.</p>
+    <p class="disclosure">Some links below are affiliate links. If you buy through them I may earn a small commission — at no extra cost to you. Thanks for supporting the channel.</p>
+
+    <div class="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="q" type="text" placeholder="Search gear…" autocomplete="off">
+    </div>
+    <p id="noresults" class="noresults">No gear matches that search.</p>
+
+    <div id="catalog"></div>
+  </div>
+
+<script>
+/* ============================================================
+   ADD / EDIT GEAR HERE.
+   - To add an item:  {name:"Item name", url:"https://..."}
+   - In-store only (no link):  {name:"Item name", store:"Location"}
+   ============================================================ */
+const GEAR = {
+  "Exterior & Protection":[
+    {name:"Mud Guard", url:"https://s.shopee.ph/6pwIiOvgNH"},
+    {name:"Windshield Cover (outdoor)", url:"https://s.shopee.ph/10yVkiRxsX"},
+    {name:"License Plate Adapter", url:"https://s.shopee.ph/7fVPg2QI0U"},
+    {name:"BYD Side Edge Anti-Hit Protection", url:"https://s.shopee.ph/7AZ96WAvIN"},
+    {name:"Rain Visor", url:"https://s.shopee.ph/3fzGwISCx6"},
+    {name:"Car Cover", url:"https://s.shopee.ph/8fNwtV3PJW"},
+    {name:"Door Sill", url:"https://s.shopee.ph/8phN59NjaS"}
+  ],
+  "Interior & Comfort":[
+    {name:"Trunk Cargo Tray", url:"https://s.shopee.ph/8V4WfF9g7V"},
+    {name:"Windshield Cover (cabin)", url:"https://s.shopee.ph/3Vfqi88PJ4"},
+    {name:"Frunk Tray", store:"BYD Greenfield, Mandaluyong"},
+    {name:"Coil Rubber Matting", url:"https://s.shopee.ph/8phN4ZTPNs"},
+    {name:"Alcantara Steering Wheel Cover", url:"https://s.shopee.ph/6pwIapmb3A"},
+    {name:"Sun Visor Card Holder", url:"https://s.shopee.ph/6pwIgqUG9D"},
+    {name:"BYD Tissue Holder", url:"https://s.shopee.ph/BPOkbsknE"},
+    {name:"Magnet Sun Screens for Door Windows", url:"https://s.shopee.ph/5VQv7Yo2fR"},
+    {name:"Car Seat Hook Buckle", url:"https://s.shopee.ph/9ztKT1viLO"}
+  ],
+  "Charging & Power":[
+    {name:"Charger Cover", url:"https://s.shopee.ph/7fVPfvKSGW"},
+    {name:"EV Extension with Ground", url:"https://s.shopee.ph/2LTtLPvODS"},
+    {name:"Charging Port Rubber", url:"https://s.shopee.ph/40c7JH5WUp"}
+  ],
+  "Keys, Access & Safety":[
+    {name:"Door Lock Cover", url:"https://s.shopee.ph/2qQ9ueM5Cr"},
+    {name:"BYD Card Key Cover", url:"https://s.shopee.ph/1qXckgE5mL"},
+    {name:"Keyfob Cover", url:"https://s.shopee.ph/30ja90n8TB"},
+    {name:"Window Breaker / Seat Belt Cutter", url:"https://s.shopee.ph/4VYNvXrH3C"}
+  ],
+  "Tech & Dashcam":[
+    {name:"Pocket Wifi Modem", url:"https://s.shopee.ph/4qBEJFmVF1"},
+    {name:"DDPAI Mini 2x", url:"https://s.shopee.ph/7popsninaA"},
+    {name:"DDPAI Z50", url:"https://s.shopee.ph/5L7UuFrF2C"},
+    {name:"DDPAI Hardwire OBD Kit", url:"https://s.shopee.ph/60NBhVSAj6"},
+    {name:"Popcorn Memory Card", url:"https://s.shopee.ph/BPOkoVYnP"}
+  ],
+  "Production Camera Gear":[
+    {name:"DJI Osmo Nano", url:"https://s.shopee.ph/1LbMAvrfBN"},
+    {name:"DJI Mic Mini", url:"https://s.shopee.ph/9pZuIe4eNl"},
+    {name:"Sony a6700", url:"https://s.shopee.ph/1qXclyYR3I"},
+    {name:"Sony E 16-55 f2.8", url:"https://s.shopee.ph/W2FBbO9fr"}
+  ]
+};
+/* ============================================================ */
+
+const catalog = document.getElementById('catalog');
+const cartSvg = '<svg viewBox="0 0 24 24"><path d="M5 7h14l-1 13H6L5 7z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/></svg>';
+const pinSvg  = '<svg viewBox="0 0 24 24"><path d="M12 21s-6-5.7-6-10a6 6 0 1 1 12 0c0 4.3-6 10-6 10z"/><circle cx="12" cy="11" r="2"/></svg>';
+const arrowSvg= '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+function esc(s){return s.replace(/</g,'&lt;')}
+
+Object.entries(GEAR).forEach(([cat,items])=>{
+  const sec=document.createElement('section');
+  sec.className='cat';
+  sec.dataset.cat=cat.toLowerCase();
+  sec.innerHTML=`<div class="cat-head"><h2>${cat}</h2><span class="count">${items.length}</span></div>`;
+  const grid=document.createElement('div');
+  grid.className='grid';
+  items.forEach(it=>{
+    const name=esc(it.name);
+    let card;
+    if(it.url){
+      card=document.createElement('a');
+      card.className='item';
+      card.href=it.url; card.target='_blank'; card.rel='noopener sponsored';
+      card.innerHTML=`<div class="item-name">${name}</div>
+        <span class="tag">View on Shopee ${arrowSvg}</span>`;
+    }else{
+      card=document.createElement('div');
+      card.className='item store';
+      card.innerHTML=`<div class="item-name">${name}</div>
+        <span class="tag loc">${pinSvg} ${esc(it.store||'In store')}</span>`;
+    }
+    card.dataset.name=it.name.toLowerCase();
+    grid.appendChild(card);
+  });
+  sec.appendChild(grid);
+  catalog.appendChild(sec);
+});
+
+// live search
+const q=document.getElementById('q');
+const noResults=document.getElementById('noresults');
+q.addEventListener('input',()=>{
+  const term=q.value.trim().toLowerCase();
+  let anyVisible=false;
+  document.querySelectorAll('.cat').forEach(sec=>{
+    let secVisible=false;
+    sec.querySelectorAll('.item').forEach(card=>{
+      const match=card.dataset.name.includes(term);
+      card.style.display=match?'':'none';
+      if(match){secVisible=true;anyVisible=true;}
+    });
+    sec.style.display=secVisible?'':'none';
+  });
+  noResults.style.display=anyVisible?'none':'block';
+});
+</script>
+</body>
+</html>
