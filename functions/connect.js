@@ -51,8 +51,24 @@ const FORM_HTML = `<!DOCTYPE html>
     .detail.show { display: flex; flex-direction: column; animation: fade 0.25s ease; }
     @keyframes fade { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
 
-    .consent-row { display: flex; align-items: flex-start; gap: 10px; background: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 8px; padding: 14px; cursor: pointer; }
-    .consent-row input[type="checkbox"] { width: 22px; height: 22px; min-width: 22px; margin-top: 0; accent-color: #22c55e; cursor: pointer; padding: 0; }
+    .consent-row { display: flex; align-items: flex-start; gap: 12px; background: #1a1a1a; border: 1px solid #2d2d2d; border-radius: 8px; padding: 14px; cursor: pointer; }
+    .consent-row input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
+    .checkmark {
+      flex: none; width: 24px; height: 24px; border-radius: 6px;
+      border: 2px solid #3d3d3d; background: #0f0f0f; position: relative;
+      transition: all 0.15s ease; margin-top: 1px;
+    }
+    .checkmark::after {
+      content: ''; position: absolute; left: 7px; top: 3px;
+      width: 6px; height: 11px; border: solid #000; border-width: 0 3px 3px 0;
+      transform: rotate(45deg) scale(0); transition: transform 0.15s ease;
+    }
+    .consent-row input[type="checkbox"]:checked + .checkmark {
+      background: #22c55e; border-color: #22c55e;
+    }
+    .consent-row input[type="checkbox"]:checked + .checkmark::after {
+      transform: rotate(45deg) scale(1);
+    }
     .consent-row span { font-size: 13px; color: #9ca3af; line-height: 1.5; }
     button[type="submit"] { width: 100%; padding: 15px; background: #22c55e; color: #000; font-size: 15px; font-weight: 700;
       border: none; border-radius: 8px; cursor: pointer; letter-spacing: 0.02em; margin-top: 4px; transition: background 0.2s, transform 0.1s; }
@@ -127,6 +143,7 @@ const FORM_HTML = `<!DOCTYPE html>
 
     <label class="consent-row" for="consent">
       <input type="checkbox" id="consent" name="consent" required />
+      <span class="checkmark"></span>
       <span>Pumapayag ako na makipag-ugnayan sa akin ang EV Pilipinas at ang aming trusted partners para sa aking inquiry. (I agree to be contacted.)</span>
     </label>
 
