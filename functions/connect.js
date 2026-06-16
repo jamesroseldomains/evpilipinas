@@ -86,7 +86,6 @@ const FORM_HTML = `<!DOCTYPE html>
   </a>
   <div class="logo">EV Pilipinas</div>
   <h1>Gusto mong bumili ng EV o mag-install ng Solar?</h1>
-  <p class="sub">Ilagay ang iyong details at ikokonekta ka namin sa trusted dealer o installer. Free — walang pressure.</p>
 
   <form method="POST" action="/connect">
     <div class="field"><label for="name">Full Name</label>
