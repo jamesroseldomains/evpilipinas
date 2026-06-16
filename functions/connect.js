@@ -130,7 +130,7 @@ const FORM_HTML = `<!DOCTYPE html>
       <span>Pumapayag ako na makipag-ugnayan sa akin ang EV Pilipinas at ang aming trusted partners para sa aking inquiry. (I agree to be contacted.)</span>
     </label>
 
-    <button type="submit" id="submitBtn" disabled>Ipadala ang aking inquiry →</button>
+    <button type="submit" id="submitBtn" disabled>Send Inquiry →</button>
     <p class="note">Hindi ibebenta ang iyong info. For referral purposes lang — para makonekta ka sa tamang tao.</p>
   </form>
 
