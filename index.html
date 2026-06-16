@@ -80,13 +80,14 @@
   .brand{
     display:inline-flex;
     align-items:center;
-    gap:9px;
+    gap:7px;
     font-family:'Bricolage Grotesque',sans-serif;
     font-weight:800;
     font-size:clamp(1.5rem,5vw,2.1rem);
     letter-spacing:-.02em;
     line-height:1;
   }
+  .brand .ph{color:var(--accent);margin-left:-.1em}
   .brand .bolt{
     width:30px;height:30px;
     display:grid;place-items:center;
@@ -96,7 +97,6 @@
     box-shadow:0 0 24px var(--glow);
     flex:none;
   }
-  .brand .ph{color:var(--accent)}
   .tagline{
     margin-top:14px;
     color:var(--muted);
@@ -258,7 +258,7 @@
         <span class="bolt">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4.5 13.5H11l-1 8.5L19.5 10H13z"/></svg>
         </span>
-        EV&nbsp;<span class="ph">Pilipinas</span>
+        EV <span class="ph">Pilipinas</span>
       </div>
       <p class="tagline">Practical EV ownership in the Philippines.</p>
     </header>
