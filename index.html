@@ -108,17 +108,19 @@
   }
 
   .grid{
-    display:grid;
-    grid-template-columns:1fr;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
     gap:16px;
     margin:auto 0;
   }
+  .box{flex:1 1 100%}
   @media(min-width:760px){
-    .grid{grid-template-columns:repeat(2,1fr);gap:20px}
+    .grid{gap:20px}
+    .box{flex:1 1 calc(50% - 10px);max-width:calc(50% - 10px)}
   }
   @media(min-width:1020px){
-    .grid{grid-template-columns:repeat(4,1fr);gap:20px}
-    .box{min-height:240px}
+    .box{flex:1 1 calc(33.333% - 14px);max-width:calc(33.333% - 14px);min-height:240px}
   }
 
   .box{
@@ -140,6 +142,7 @@
   .box:nth-child(2){animation-delay:.16s}
   .box:nth-child(3){animation-delay:.24s}
   .box:nth-child(4){animation-delay:.32s}
+  .box:nth-child(5){animation-delay:.40s}
 
   @media(min-width:760px){
     .box{min-height:280px;justify-content:flex-end;padding:30px 26px}
@@ -277,7 +280,19 @@
         </div>
       </a>
 
-      <!-- BOX 2 : FIND A DEALER -->
+      <!-- BOX 2 : EV COMPARISON -->
+      <a class="box" href="compare.html">
+        <span class="ico">
+          <svg viewBox="0 0 24 24"><path d="M3 6h7v14H3zM14 4h7v16h-7z"/><path d="M6.5 10v6M17.5 8v8"/></svg>
+        </span>
+        <div>
+          <h2 class="box-title">EV Comparison</h2>
+          <p class="box-sub">Compare up to 4 EVs side by side, scored on what matters.</p>
+          <span class="arrow">Compare <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+        </div>
+      </a>
+
+      <!-- BOX 3 : FIND A DEALER -->
       <a class="box" href="/connect">
         <span class="ico">
           <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
