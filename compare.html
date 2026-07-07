@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EV Comparison | EV Pilipinas</title>
+<meta name="description" content="Compare EVs side by side — specs, ownership, and a weighted score based on what matters to Filipino buyers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d0c;--card:#111816;--card-2:#16201d;--line:#1e2b27;
+    --text:#eef3f1;--muted:#8aa39b;--accent:#2ee6a6;--accent-2:#13c4e6;
+    --a:#2ee6a6;--b:#13c4e6;--c:#ffd166;--d:#ff9e5e;--e:#ff6b6b;
+    --glow:rgba(46,230,166,.16);--radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Manrope',-apple-system,sans-serif;background:var(--bg);color:var(--text);
+    -webkit-font-smoothing:antialiased;min-height:100vh;position:relative;overflow-x:hidden}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(560px circle at 15% 0%,rgba(46,230,166,.08),transparent 55%),
+               radial-gradient(620px circle at 90% 100%,rgba(19,196,230,.06),transparent 55%)}
+  .wrap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:24px 18px 60px}
+  .back{display:inline-flex;align-items:center;gap:7px;color:var(--muted);text-decoration:none;
+    font-size:.9rem;font-weight:600;margin-bottom:22px;transition:color .2s}
+  .back:hover{color:var(--accent)}
+  .back svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.02em;font-size:clamp(1.7rem,6vw,2.4rem);line-height:1.05}
+  .sub{color:var(--muted);margin-top:8px;font-size:.98rem;max-width:60ch;line-height:1.5}
+
+  .state{text-align:center;color:var(--muted);padding:60px 20px}
+  .state.err{color:#ff9d9d}
+  .spinner{width:34px;height:34px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;margin:28px 0 14px}
+  .hint{color:var(--muted);font-size:.85rem;margin-bottom:14px}
+
+  /* picker */
+  .pick{display:grid;grid-template-columns:1fr;gap:10px}
+  @media(min-width:560px){.pick{grid-template-columns:repeat(2,1fr)}}
+  @media(min-width:860px){.pick{grid-template-columns:repeat(3,1fr)}}
+  .pcard{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:13px 14px;cursor:pointer;transition:all .18s;text-align:left}
+  .pcard:hover{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+  .pcard.on{border-color:var(--accent);background:#14241c}
+  .pcard.disabled{opacity:.4;cursor:not-allowed}
+  .pcard .box{width:22px;height:22px;flex:none;border-radius:6px;border:2px solid var(--line);position:relative;transition:all .15s}
+  .pcard.on .box{background:var(--accent);border-color:var(--accent)}
+  .pcard.on .box::after{content:'';position:absolute;left:6px;top:2px;width:6px;height:11px;border:solid #04140e;border-width:0 3px 3px 0;transform:rotate(45deg)}
+  .pcard .pt{font-weight:600;font-size:.95rem;line-height:1.2}
+  .pcard .ps{color:var(--muted);font-size:.78rem;margin-top:2px}
+
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:18px 0 6px}
+  .bar .count{color:var(--muted);font-size:.85rem}
+  .clear{background:none;border:none;color:var(--muted);font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;text-decoration:underline}
+  .clear:hover{color:var(--accent)}
+
+  /* scoreboard */
+  .scores{display:grid;gap:12px;margin-bottom:8px}
+  .scard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .scard .nm{font-weight:700;font-size:.95rem;margin-bottom:10px;line-height:1.2}
+  .grade{display:flex;align-items:baseline;gap:8px;margin-bottom:12px}
+  .grade .g{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;line-height:1}
+  .grade .pct{color:var(--muted);font-size:.85rem;font-weight:600}
+  .subrow{display:flex;align-items:center;gap:8px;margin-top:6px}
+  .subrow .sl{color:var(--muted);font-size:.72rem;width:88px;flex:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .track{flex:1;height:6px;background:var(--card-2);border-radius:99px;overflow:hidden}
+  .track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-2))}
+  .subrow .sv{font-size:.72rem;color:var(--muted);width:32px;text-align:right;flex:none}
+
+  /* comparison table */
+  .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:14px;margin-top:8px}
+  table{border-collapse:collapse;width:100%;min-width:520px}
+  th,td{padding:12px 14px;text-align:left;font-size:.9rem;border-bottom:1px solid var(--line)}
+  thead th{background:var(--card);position:sticky;top:0;z-index:2}
+  .spec-col{position:sticky;left:0;z-index:1;background:var(--card);color:var(--muted);font-weight:600;
+    white-space:nowrap;min-width:170px;border-right:1px solid var(--line)}
+  thead .spec-col{z-index:3}
+  thead th{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.92rem;color:var(--text);vertical-align:bottom}
+  thead .cimg{width:56px;height:38px;object-fit:cover;border-radius:6px;display:block;margin-bottom:6px;border:1px solid var(--line)}
+  thead .cvar{color:var(--muted);font-size:.75rem;font-weight:500;margin-top:2px}
+  .section-row td{background:var(--card-2);font-family:'Bricolage Grotesque',sans-serif;font-weight:700;
+    font-size:.82rem;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);padding:9px 14px}
+  td.best{color:var(--accent);font-weight:700;background:rgba(46,230,166,.07)}
+  td.val{white-space:nowrap}
+  .yes{color:var(--accent);font-weight:700}
+  .no{color:#5f726b}
+  tbody tr:last-child td{border-bottom:none}
+
+  .note{color:var(--muted);font-size:.8rem;margin-top:16px;line-height:1.5;border-left:2px solid var(--line);padding-left:12px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back" href="index.html"><svg viewBox="0 0 24 24"><path d="M19 12H5M11 18l-6-6 6-6"/></svg> Back to Home</a>
+    <h1>EV Comparison</h1>
+    <p class="sub">Pick up to 4 EVs to compare side by side — specs, ownership reality, and a weighted score based on what matters most.</p>
+
+    <div id="status" class="state"><div class="spinner"></div>Loading cars…</div>
+    <div id="app" style="display:none">
+      <h2>Choose cars <span style="color:var(--muted);font-weight:400;font-size:.9rem">(up to 4)</span></h2>
+      <div class="pick" id="picker"></div>
+      <div class="bar">
+        <span class="count" id="count">Select at least 2 to compare.</span>
+        <button class="clear" id="clearBtn" style="display:none">Clear all</button>
+      </div>
+      <div id="results"></div>
+    </div>
+  </div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbxJEeCS4GcHEEMR0ZG0zWOaPGv7Fw2qF2anN_ZxqdJJi9tBUxPmVEeKW5EljYsCj0u9/exec';
+
+const IDENTITY = ['Car Name','Brand','Variant','Model Year','Availability','Image URL'];
+let CARS = [], CONFIG = [], selected = [];
+
+const $ = id => document.getElementById(id);
+const carName = c => (c['Car Name']||'') + (c['Variant'] ? ' — ' + c['Variant'] : '');
+
+function toNum(v){
+  if(v===null||v===undefined) return NaN;
+  const s = String(v).replace(/,/g,'').replace(/[^0-9.\-]/g,'');
+  return s==='' ? NaN : parseFloat(s);
+}
+function isYes(v){ return /^(yes|y|true|1|oo|meron|✓|✔)$/i.test(String(v==null?'':v).trim()); }
+function isBlank(v){ return v===null||v===undefined||String(v).trim()===''; }
+
+function fmtVal(raw, unit){
+  if(isBlank(raw)) return '—';
+  const n = toNum(raw);
+  if((unit||'').toUpperCase()==='PHP' && !isNaN(n)) return '\u20B1' + n.toLocaleString('en-PH');
+  if(!isNaN(n) && unit && String(raw).trim()===String(n)) return n.toLocaleString('en-PH') + ' ' + unit;
+  return String(raw);
+}
+
+async function load(){
+  try{
+    const res = await fetch(API);
+    const data = await res.json();
+    CARS = (data.cars||[]).filter(c => !isBlank(c['Car Name']));
+    CONFIG = (data.config||[]).filter(r => !isBlank(r['Spec']));
+    if(!CARS.length){ $('status').className='state err'; $('status').textContent='No cars found in the sheet yet. Add rows to the Cars tab.'; return; }
+    $('status').style.display='none';
+    $('app').style.display='block';
+    renderPicker();
+  }catch(e){
+    $('status').className='state err';
+    $('status').innerHTML = 'Couldn\u2019t load data: ' + e.message + '<br><span style="font-size:.8rem">Check the Apps Script is deployed with access set to \u201cAnyone.\u201d</span>';
+  }
+}
+
+function renderPicker(){
+  const p = $('picker');
+  p.innerHTML = CARS.map((c,i) => {
+    const on = selected.includes(i);
+    const disabled = !on && selected.length>=4;
+    return `<button class="pcard ${on?'on':''} ${disabled?'disabled':''}" data-i="${i}" ${disabled?'disabled':''}>
+      <span class="box"></span>
+      <span><span class="pt">${carName(c)}</span><span class="ps">${c['Brand']||''}${c['Availability']?' · '+c['Availability']:''}</span></span>
+    </button>`;
+  }).join('');
+  p.querySelectorAll('.pcard').forEach(btn => btn.addEventListener('click', () => {
+    const i = +btn.dataset.i;
+    if(selected.includes(i)) selected = selected.filter(x=>x!==i);
+    else { if(selected.length>=4) return; selected.push(i); }
+    renderPicker(); renderResults();
+  }));
+  const n = selected.length;
+  $('count').textContent = n===0 ? 'Select at least 2 to compare.' : n===1 ? 'Select 1 more to compare.' : n + ' cars selected.';
+  $('clearBtn').style.display = n ? 'inline' : 'none';
+}
+$('clearBtn') && ($('clearBtn').onclick = () => { selected=[]; renderPicker(); renderResults(); });
+document.addEventListener('click', e => { if(e.target && e.target.id==='clearBtn'){ selected=[]; renderPicker(); renderResults(); } });
+
+/* ----- sections & scoring ----- */
+function sections(){
+  const order = [], map = {};
+  CONFIG.forEach(r => {
+    const sec = r['Section'] || 'Other';
+    if(!map[sec]){ map[sec]=[]; order.push(sec); }
+    map[sec].push(r);
+  });
+  return order.map(s => ({ name:s, specs:map[s] }));
+}
+
+function scoreCar(car, secs){
+  // returns { total:%, sections:{name:%}, }
+  let pts=0, max=0; const secScore={};
+  secs.forEach(sec => {
+    let sp=0, sm=0;
+    sec.specs.forEach(spec => {
+      const dir = String(spec['Direction']||'').trim().toLowerCase();
+      const w = toNum(spec['Weight'])||0;
+      if(w<=0 || !['higher','lower','yes'].includes(dir)) return;
+      const key = spec['Spec'];
+      const mine = car[key];
+      if(dir==='yes'){
+        sm += w; sp += (isYes(mine)?1:0)*w; return;
+      }
+      // numeric higher/lower — only among selected cars that have values
+      const vals = selected.map(i => toNum(CARS[i][key])).filter(v => !isNaN(v));
+      const mineN = toNum(mine);
+      if(isNaN(mineN) || !vals.length) return;
+      let sc = 0;
+      if(dir==='higher'){ const best=Math.max(...vals); sc = best>0 ? mineN/best : 1; }
+      else { const best=Math.min(...vals); sc = mineN>0 ? best/mineN : 0; }
+      sc = Math.max(0, Math.min(1, sc));
+      sm += w; sp += sc*w;
+    });
+    secScore[sec.name] = sm>0 ? Math.round(sp/sm*100) : null;
+    pts += sp; max += sm;
+  });
+  return { total: max>0 ? Math.round(pts/max*100) : 0, sections: secScore };
+}
+
+function gradeOf(p){
+  if(p>=85) return ['A','var(--a)'];
+  if(p>=70) return ['B','var(--b)'];
+  if(p>=55) return ['C','var(--c)'];
+  if(p>=40) return ['D','var(--d)'];
+  return ['E','var(--e)'];
+}
+
+function bestIndexes(spec){
+  // among selected, return set of positions (0..selected.length-1) that are "best"
+  const dir = String(spec['Direction']||'').trim().toLowerCase();
+  const hl = String(spec['Highlight']||'').trim().toLowerCase()==='yes';
+  if(!hl || !['higher','lower','yes'].includes(dir)) return new Set();
+  const key = spec['Spec'];
+  if(dir==='yes'){
+    const s=new Set(); selected.forEach((i,pos)=>{ if(isYes(CARS[i][key])) s.add(pos); }); return s;
+  }
+  const nums = selected.map(i => toNum(CARS[i][key]));
+  const valid = nums.filter(v=>!isNaN(v));
+  if(!valid.length) return new Set();
+  const target = dir==='higher' ? Math.max(...valid) : Math.min(...valid);
+  const s=new Set(); nums.forEach((v,pos)=>{ if(!isNaN(v) && v===target) s.add(pos); }); return s;
+}
+
+function renderResults(){
+  const r = $('results');
+  if(selected.length<2){ r.innerHTML=''; return; }
+  const secs = sections();
+  const cars = selected.map(i => CARS[i]);
+
+  // scoreboard
+  const scoreData = cars.map(c => scoreCar(c, secs));
+  const allSecNames = secs.map(s=>s.name);
+  const scoresHTML = `<h2>Scorecard</h2>
+    <div class="hint">Weighted by your priorities (set in the sheet). Best value per spec scores highest among the cars shown.</div>
+    <div class="scores" style="grid-template-columns:repeat(${Math.min(cars.length,2)},1fr)">
+    ${cars.map((c,idx)=>{
+      const sd=scoreData[idx]; const [g,col]=gradeOf(sd.total);
+      const subs = allSecNames.filter(n=>sd.sections[n]!=null).map(n=>{
+        const v=sd.sections[n];
+        return `<div class="subrow"><span class="sl">${n}</span><span class="track"><i style="width:${v}%"></i></span><span class="sv">${v}</span></div>`;
+      }).join('');
+      return `<div class="scard"><div class="nm">${carName(c)}</div>
+        <div class="grade"><span class="g" style="color:${col}">${g}</span><span class="pct">${sd.total}% overall</span></div>
+        ${subs}</div>`;
+    }).join('')}
+    </div>`;
+
+  // table
+  let rows = '';
+  secs.forEach(sec => {
+    rows += `<tr class="section-row"><td class="spec-col" style="background:var(--card-2)">${sec.name}</td>${cars.map(()=>'<td style="background:var(--card-2)"></td>').join('')}</tr>`;
+    sec.specs.forEach(spec => {
+      const key = spec['Spec']; const unit = spec['Unit']||'';
+      const dir = String(spec['Direction']||'').trim().toLowerCase();
+      const best = bestIndexes(spec);
+      const cells = cars.map((c,pos)=>{
+        const raw = c[key];
+        let inner;
+        if(dir==='yes') inner = isBlank(raw) ? '<span class="no">—</span>' : (isYes(raw)?'<span class="yes">✓ Yes</span>':'<span class="no">✗ No</span>');
+        else inner = fmtVal(raw, unit);
+        return `<td class="val ${best.has(pos)?'best':''}">${inner}</td>`;
+      }).join('');
+      rows += `<tr><td class="spec-col">${key}${unit && unit.toUpperCase()!=='PHP' && dir!=='yes' ? ' <span style="color:#4b5f58">('+unit+')</span>':''}</td>${cells}</tr>`;
+    });
+  });
+
+  const head = `<tr><th class="spec-col">Spec</th>${cars.map(c=>{
+    const img = c['Image URL']; 
+    return `<th>${img?`<img class="cimg" src="${img}" alt="" onerror="this.style.display='none'">`:''}${c['Car Name']||''}<div class="cvar">${c['Variant']||''}</div></th>`;
+  }).join('')}</tr>`;
+
+  r.innerHTML = scoresHTML +
+    `<h2>Full comparison</h2>
+     <div class="tablewrap"><table><thead>${head}</thead><tbody>${rows}</tbody></table></div>
+     <p class="note">Scores are relative to the cars you selected — the best car for each weighted spec sets the benchmark. Text specs (distributor, battery type) are shown for reference but not scored. Adjust the weights in your sheet to match your own priorities.</p>`;
+}
+
+load();
+</script>
+</body>
+</html>
